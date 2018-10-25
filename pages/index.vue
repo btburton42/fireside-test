@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="section left-right-pad is-fluid">
+    <!-- <section class="section left-right-pad is-fluid">
       <div class="hero is-medium is-primary is-bold has-text-centered">
         <div class="hero-body">
           <h1 class="title">
@@ -9,12 +9,9 @@
           <h2 class="subtitle">
             Toys and Gifts for the Geeky Ones!
           </h2>
-          <br><br>
-          <a type="button" class="button is-warning" @click="increment(1)">++</a>
-          <a href="" class="button is-danger">{{counter}}</a>
         </div>
       </div>
-    </section>
+    </section> -->
 
     <section class="section">
       <div class="box">
@@ -155,16 +152,5 @@
 </template>
 
 <script>
-export default {
-  computed: {
-    counter() {
-      return this.$store.getters.counter
-    }
-  },
-  methods: {
-    increment(val) {
-      this.$store.dispatch('increment', val)
-    }
-  }
-}
+export default {}
 </script>
