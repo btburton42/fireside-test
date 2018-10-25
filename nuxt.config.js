@@ -14,8 +14,12 @@ module.exports = {
       { hid: 'description', name: 'description', content: pkg.description }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'stylesheet', href: '/bulma.css' },
+      { rel: 'stylesheet', href: '/styles.css' },
+      { rel: 'stylesheet', href: '/font-awesome.min.css' }
+    ],
+    script: [{ src: './util.js', type: 'text/javascript' }]
   },
 
   /*
@@ -26,14 +30,12 @@ module.exports = {
   /*
   ** Global CSS
   */
-  css: [
-  ],
+  css: [],
 
   /*
   ** Plugins to load before mounting the App
   */
-  plugins: [
-  ],
+  plugins: [],
 
   /*
   ** Nuxt.js modules
