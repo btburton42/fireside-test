@@ -24,6 +24,7 @@ module.exports = {
     'vue/max-attributes-per-line': 'off',
     'vue/html-indent': 'off',
     'vue/html-self-closing': 'off',
-    'prettier/prettier': 'off'
+    'prettier/prettier': 'off',
+    'vue/mustache-interpolation-spacing': 'off'
   }
 }

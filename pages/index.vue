@@ -1,6 +1,6 @@
 <template>
   <div>
-    <section class="section left-right-pad is-fluid">  
+    <section class="section left-right-pad is-fluid">
       <div class="hero is-medium is-primary is-bold has-text-centered">
         <div class="hero-body">
           <h1 class="title">
@@ -8,16 +8,19 @@
           </h1>
           <h2 class="subtitle">
             Toys and Gifts for the Geeky Ones!
-          </h2>   
+          </h2>
+          <br><br>
+          <a type="button" class="button is-warning" @click="increment(1)">++</a>
+          <a href="" class="button is-danger">{{counter}}</a>
         </div>
       </div>
-    </section>   
-      
+    </section>
+
     <section class="section">
       <div class="box">
         <nav class="level">
-          <div class="level-left">   
-              <div class="field is-grouped is-grouped-multiline">                        
+          <div class="level-left">
+              <div class="field is-grouped is-grouped-multiline">
                   <p class="control">
                     <input class="input" type="text" placeholder="Keyword">
                   </p>
@@ -36,9 +39,9 @@
                     </a>
                   </p>
                 </div>
-          </div>    
-            
-          <div class="level-right">   
+          </div>
+
+          <div class="level-right">
               <div class="field is-grouped is-grouped-multiline">
                   <p class="control">
                     <span class="select">
@@ -48,22 +51,22 @@
                         <option>Price - High to Low</option>
                       </select>
                     </span>
-                  </p> 
+                  </p>
               </div>
           </div>
         </nav>
       </div>
-        
+
       <div class="columns is-mobile is-multiline">
         <div class="column is-full-mobile is-half-tablet is-half-desktop is-one-third-widescreen is-one-quarter-fullhd">
           <div class="card">
             <div class="card-image">
               <figure class="image is-4by3">
-                <nuxt-link to="/product"><img src="http://placehold.it/800x600" alt="Image"></nuxt-link>                
+                <nuxt-link to="/product"><img src="http://placehold.it/800x600" alt="Image"></nuxt-link>
               </figure>
             </div>
             <div class="card-content">
-              <div class="media-content has-text-centered">                            
+              <div class="media-content has-text-centered">
                 <p class="subtitle is-6">Black Drone</p>
                 <p class="title is-4">$374.69</p>
               </div>
@@ -86,30 +89,7 @@
               </figure>
             </div>
             <div class="card-content">
-              <div class="media-content has-text-centered">                            
-                <p class="subtitle is-6">Black Drone</p>
-                <p class="title is-4">$374.69</p>
-              </div>
-            </div>
-            <footer class="card-footer">
-              <p class="card-footer-item">
-                <span>
-                    <a href="#" class="button is-primary">Add to Cart</a>
-                </span>
-              </p>
-            </footer>
-          </div>
-        </div>
-          
-        <div class="column is-full-mobile is-half-tablet is-half-desktop is-one-third-widescreen is-one-quarter-fullhd">
-          <div class="card">
-            <div class="card-image">
-              <figure class="image is-4by3">
-                <a href="product.html"><img src="http://placehold.it/800x600" alt="Image"></a>
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="media-content has-text-centered">                            
+              <div class="media-content has-text-centered">
                 <p class="subtitle is-6">Black Drone</p>
                 <p class="title is-4">$374.69</p>
               </div>
@@ -132,7 +112,30 @@
               </figure>
             </div>
             <div class="card-content">
-              <div class="media-content has-text-centered">                            
+              <div class="media-content has-text-centered">
+                <p class="subtitle is-6">Black Drone</p>
+                <p class="title is-4">$374.69</p>
+              </div>
+            </div>
+            <footer class="card-footer">
+              <p class="card-footer-item">
+                <span>
+                    <a href="#" class="button is-primary">Add to Cart</a>
+                </span>
+              </p>
+            </footer>
+          </div>
+        </div>
+
+        <div class="column is-full-mobile is-half-tablet is-half-desktop is-one-third-widescreen is-one-quarter-fullhd">
+          <div class="card">
+            <div class="card-image">
+              <figure class="image is-4by3">
+                <a href="product.html"><img src="http://placehold.it/800x600" alt="Image"></a>
+              </figure>
+            </div>
+            <div class="card-content">
+              <div class="media-content has-text-centered">
                 <p class="subtitle is-6">Black Drone</p>
                 <p class="title is-4">$374.69</p>
               </div>
@@ -145,12 +148,23 @@
               </p>
             </footer>
           </div>
-        </div>                      
+        </div>
       </div>
     </section>
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+  computed: {
+    counter() {
+      return this.$store.getters.counter
+    }
+  },
+  methods: {
+    increment(val) {
+      this.$store.dispatch('increment', val)
+    }
+  }
+}
 </script>
