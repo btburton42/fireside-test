@@ -25,6 +25,7 @@ module.exports = {
     'vue/html-indent': 'off',
     'vue/html-self-closing': 'off',
     'prettier/prettier': 'off',
-    'vue/mustache-interpolation-spacing': 'off'
+    'vue/mustache-interpolation-spacing': 'off',
+    'vue/require-prop-types': 'off'
   }
 }
