@@ -7,9 +7,11 @@
         <div class="column is-one-third">
           <form @submit.prevent="onSubmit">
             <div class="field">
-              <label class="label">New user group</label>
+              <label class="label" v-if="!group">New user group</label>
+              <label class="label" v-else>Update user group</label>
               <div class="control">
-                <input class="input" type="text" v-model="name">
+                <input class="input" type="text" name="name" v-model="name" v-validate="'required|min:4'" :class="{'is-danger': errors.has('name')}">
+                <p v-show="errors.has('name')" class="help is-danger">{{ errors.first('name')}}</p>
               </div>
             </div>
 
@@ -17,7 +19,8 @@
 
             <div class="field">
               <div class="control">
-                <button type="submit" class="button is-primary" :class="{'is-loading': busy}" :disabled="busy">Create</button>
+                <button type="submit" class="button is-primary" :class="{'is-loading': busy}" :disabled="busy">{{!group ? 'Create' : 'Update'}}</button>
+                <button style="margin-left:10px;" type="button" class="button" @click="cancelUpdate()" v-if="group">Cancel</button>
               </div>
             </div>
           </form>
@@ -32,15 +35,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th>1</th>
-                <td><a href="#">Administrator</a></td>
-                <td><a href="#"><span class="icon has-text-danger"><i class="fa fa-lg fa-times-circle"></i></span></a></td>
-              </tr>
-              <tr>
-                <th>2</th>
-                <td><a href="#">Customer</a></td>
-                <td><a href="#"><span class="icon has-text-danger"><i class="fa fa-lg fa-times-circle"></i></span></a></td>
+              <tr v-for="(group, index) in groups" :key="group.key">
+                <th>{{++index}}</th>
+                <td><a href="#" @click.prevent="selectGroup(group)">{{ group.name}}</a></td>
+                <td><a href="#" @click.prevent="removeGroup(group)"><span class="icon has-text-danger"><i class="fa fa-lg fa-times-circle"></i></span></a></td>
               </tr>
             </tbody>
           </table>
@@ -51,46 +49,89 @@
 </template>
 
 <script>
-import ErrorBar from '@/components/ErrorBar'
-export default {
-  components: {
-    ErrorBar: ErrorBar
-  },
-  data() {
-    return {
-      name: ''
-    }
-  },
-  computed: {
-    error() {
-      return this.$store.getters.error
+  import ErrorBar from '@/components/ErrorBar'
+  export default {
+    components: {
+      ErrorBar: ErrorBar
     },
-    busy() {
-      return this.$store.getters.busy
+    data() {
+      return {
+        name: '',
+        group: null
+      }
     },
-    jobDone() {
-      return this.$store.getters.jobDone
-    }
-  },
-  watch: {
-    jobDone(value) {
-      if (value) {
-        this.$store.commit('setJobDone', false)
+    computed: {
+      groups() {
+        return this.$store.getters['admin/groups']
+      },
+      error() {
+        return this.$store.getters.error
+      },
+      busy() {
+        return this.$store.getters.busy
+      },
+      jobDone() {
+        return this.$store.getters.jobDone
+      }
+    },
+    watch: {
+      jobDone(value) {
+        if (value) {
+          this.$store.commit('setJobDone', false)
+          this.jobsDone()
+        }
+      }
+    },
+    created () {
+      const loadedGroups = this.$store.getters['admin/groups']
+      if (loadedGroups.length === 0) {
+        this.$store.dispatch('admin/getGroups');
+      }
+    },
+    methods: {
+      onSubmit() {
+        this.$validator.validateAll()
+          .then(result => {
+            if (result) {
+              if (!this.group) {
+                this.$store.dispatch('admin/createGroup', { name: this.name })
+              } else {
+                this.$store.dispatch('admin/updateGroup', { name: this.name, group: this.group })
+              }
+            }
+          })
+      },
+      selectGroup (group) {
+        this.group = group;
+        this.name = group.name
+      },
+      removeGroup (group) {
+        this.$swal({
+          title: 'Delete this group?',
+          icon: 'warning',
+          buttons: true,
+          dangerMode: true
+        }).then(ok =>{
+          if (ok) {
+            this.$store.dispatch('admin/removeGroup', {group: group})
+          }
+        })
+      },
+      cancelUpdate() {
+        this.group = null
         this.jobsDone()
+      },
+      jobsDone() {
+        this.group = null
+        this.name = ''
+        this.$nextTick(() => {
+          this.removeErrors()
+        })
+      },
+      removeErrors() {
+        this.$validator.reset()
+        this.$store.commit('clearError')
       }
     }
-  },
-  methods: {
-    onSubmit() {
-      this.$store.dispatch('admin/createGroup', { name: this.name })
-    },
-    jobsDone() {
-      this.name = ''
-      this.removeErrors()
-    },
-    removeErrors() {
-      this.$store.commit('clearError')
-    }
   }
-}
 </script>
