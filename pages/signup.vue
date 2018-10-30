@@ -43,11 +43,14 @@
 
 <script>
   import ErrorBar from '@/components/ErrorBar'
-
+  import apiJobMixin from '@/mixins/apiJobMixin'
   export default {
     components: {
       ErrorBar: ErrorBar
     },
+    mixins: [
+      'apiJobMixin'
+    ],
     data () {
       return  {
         fullName: '',
