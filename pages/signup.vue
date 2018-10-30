@@ -22,7 +22,7 @@
               <div class="field">
                 <label class="label">Password</label>
                 <div class="control">
-                  <input class="input" type="text" name="password" v-model="password" v-validate="'required|min:4'" :class="{'is-danger': errors.has('password')}">
+                  <input class="input" type="password" name="password" v-model="password" v-validate="'required|min:4'" :class="{'is-danger': errors.has('password')}">
                   <p v-show="errors.has('password')" class="help is-danger">{{ errors.first('password')}}</p>
                 </div>
               </div>
@@ -91,6 +91,7 @@
       jobsDone() {
         this.$nextTick(() => {
           this.removeErrors()
+          this.$router.replace('/')
         })
       },
       removeErrors() {
