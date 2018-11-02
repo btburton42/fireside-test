@@ -83,9 +83,10 @@ export const actions = {
     commit('setBusy', true)
     commit('clearError')
     fireApp.auth().signInWithEmailAndPassword(payload.email, payload.password)
-      .then(user => {
+      .then(({user}) => {
+        console.log(user)
         const authUser = {
-          uid: user.uid,
+          id: user.uid,
           email: user.email,
           name: user.displayName
         }
