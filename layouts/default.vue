@@ -19,7 +19,7 @@
             <nuxt-link class="navbar-item" to="/">
                 Home
             </nuxt-link>
-            <div class="navbar-item has-dropdown is-hoverable">
+            <div class="navbar-item has-dropdown is-hoverable" v-if="userIsAdmin">
               <a class="navbar-link is-active" href="#">
                 Admin
               </a>
@@ -47,7 +47,23 @@
           </div>
 
           <div class="navbar-end">
-            <div class="navbar-item">
+            <div class="navbar-item has-dropdown is-hoverable" v-if="userLoggedIn">
+              <a href="#" class="navbar-link is-active">
+                Hi, {{username}}
+              </a>
+              <div class="navbar-dropdown">
+                <nuxt-link class="navbar-item" to="/user-profile">
+                  Profile
+                </nuxt-link>
+                <nuxt-link class="navbar-item" to="/user-pwd-change">
+                  Change Password
+                </nuxt-link>
+                <a class="navbar-item" @click="logOut">
+                  Log out
+                </a>
+              </div>
+            </div>
+            <div class="navbar-item" v-else>
               Hi, {{username}}
             </div>
             <div class="navbar-item">
@@ -61,7 +77,7 @@
                   </nuxt-link>
                 </p>
 
-                <p class="control">
+                <p class="control" v-if="!userLoggedIn">
                   <nuxt-link class="button is-primary" to="/login">
                       <span class="icon is-small">
                           <i class="fa fa-unlock-alt"></i>
@@ -72,7 +88,7 @@
                   </nuxt-link>
                 </p>
 
-                <p class="control">
+                <p class="control" v-if="!userLoggedIn">
                   <nuxt-link class="button is-info" to="/signup">
                     <span class="icon is-small">
                       <i class="fa fa-user-o"></i>
@@ -106,23 +122,40 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
-      username: 'Guest',
+      username: 'Guest'
     }
   },
   computed: {
     userProfile() {
       return this.$store.getters.user
+    },
+    userLoggedIn() {
+      return this.$store.getters.loginStatus
+    },
+    userIsAdmin() {
+      return this.$store.getters.userRole === 'admin'
     }
   },
   watch: {
-    userProfile (value) {
+    userProfile(value) {
       if (value) {
         this.username = value.name
       } else {
         this.username = 'Guest'
       }
+    }
+  },
+  created () {
+    if (!this.userLoggedIn) {
+      this.$store.dispatch('setAuthStatus')
+    }
+  },
+  methods: {
+    logOut() {
+      this.$store.dispatch('logOut')
+      this.$router.push('/')
     }
   }
 }

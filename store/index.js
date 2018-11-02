@@ -83,7 +83,9 @@ export const actions = {
     commit('setBusy', true)
     commit('clearError')
     fireApp.auth().signInWithEmailAndPassword(payload.email, payload.password)
-      .then(({user}) => {
+      .then(({
+        user
+      }) => {
         console.log(user)
         const authUser = {
           id: user.uid,
@@ -110,6 +112,39 @@ export const actions = {
         commit('setBusy', false)
         commit('setError', e)
       })
+  },
+  logOut({
+    commit
+  }) {
+    fireApp.auth().signOut()
+    commit('setUser', null)
+  },
+  setAuthStatus({
+    commit
+  }) {
+    fireApp.auth().onAuthStateChanged((user) => {
+      if (user) {
+        const authUser = {
+          id: user.uid,
+          email: user.email,
+          name: user.displayName
+        }
+        return fireApp.database().ref('groups').orderByChild('name').equalTo('Administrator').once('value')
+          .then(snapShot => {
+            console.log(snapShot)
+            const groupKey = Object.keys(snapShot.val())[0]
+            return fireApp.database().ref(`userGroups/${groupKey}`).child(`${authUser.id}`).once('value')
+              .then(ugroupSnap => {
+                if (ugroupSnap.exists()) {
+                  authUser.role = 'admin'
+                } else {
+                  authUser.role = 'customer'
+                }
+                commit('setUser', authUser)
+              })
+          })
+      }
+    })
   }
 }
 
@@ -119,6 +154,10 @@ export const getters = {
   },
   loginStatus(state) {
     return state.user !== null && state.user !== undefined
+  },
+  userRole(state) {
+    const isLoggedIn = state.user !== null && state.user !== undefined
+    return (isLoggedIn) ? state.user.role : 'customer'
   },
   error(state) {
     return state.error
