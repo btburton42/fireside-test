@@ -33,11 +33,13 @@ export const actions = {
     commit('clearError')
     let newUser = null
     fireApp.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-      .then(({user}) => {
+      .then(({
+        user
+      }) => {
         newUser = user;
         return user.updateProfile({
-          displayName: payload.fullName
-        })
+            displayName: payload.fullName
+          })
           .then(() => {
             const currentUser = {
               id: user.uid,
@@ -58,7 +60,7 @@ export const actions = {
       })
       .then(() => {
         return fireApp.database().ref('groups').orderByChild('name').equalTo('Customer').once('value')
-          .then( snapShot => {
+          .then(snapShot => {
             const groupKey = Object.keys(snapShot.val())[0]
             let groupedUser = {}
             groupedUser[newUser.uid] = payload.fullName
@@ -74,12 +76,48 @@ export const actions = {
       })
     commit('setJobDone', true)
     commit('setBusy', false)
+  },
+  loginUser({
+    commit
+  }, payload) {
+    commit('setBusy', true)
+    commit('clearError')
+    fireApp.auth().signInWithEmailAndPassword(payload.email, payload.password)
+      .then(user => {
+        const authUser = {
+          uid: user.uid,
+          email: user.email,
+          name: user.displayName
+        }
+        return fireApp.database().ref('groups').orderByChild('name').equalTo('Administrator').once('value')
+          .then(snapShot => {
+            const groupKey = Object.keys(snapShot.val())[0]
+            return fireApp.database().ref(`userGroups/${groupKey}`).child(`${authUser.id}`).once('value')
+              .then(ugroupSnap => {
+                if (ugroupSnap.exists()) {
+                  authUser.role = 'admin'
+                } else {
+                  authUser.role = 'customer'
+                }
+                commit('setUser', authUser)
+                commit('setBusy', false)
+                commit('setJobDone', true)
+              })
+          })
+      })
+      .catch(e => {
+        commit('setBusy', false)
+        commit('setError', e)
+      })
   }
 }
 
 export const getters = {
   user(state) {
     return state.user
+  },
+  loginStatus(state) {
+    return state.user !== null && state.user !== undefined
   },
   error(state) {
     return state.error

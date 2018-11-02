@@ -42,65 +42,34 @@
 </template>
 
 <script>
-  import ErrorBar from '@/components/ErrorBar'
-  import apiJobMixin from '@/mixins/apiJobMixin'
-  export default {
-    components: {
-      ErrorBar: ErrorBar
-    },
-    mixins: [
-      'apiJobMixin'
-    ],
-    data () {
-      return  {
-        fullName: '',
-        email: '',
-        password: ''
-      }
-    },
-    computed: {
-      error() {
-        return this.$store.getters.error
-      },
-      busy() {
-        return this.$store.getters.busy
-      },
-      jobDone() {
-        return this.$store.getters.jobDone
-      }
-    },
-    watch: {
-      jobDone(value) {
-        if (value) {
-          this.$store.commit('setJobDone', false)
-          this.jobsDone()
+import ErrorBar from '@/components/ErrorBar'
+import apiJobMixin from '@/mixins/apiJobMixin'
+
+export default {
+  components: {
+    ErrorBar: ErrorBar
+  },
+  mixins: [apiJobMixin],
+  data() {
+    return {
+      fullName: '',
+      email: '',
+      password: ''
+    }
+  },
+  methods: {
+    onSignUp() {
+      this.$validator.validateAll().then(result => {
+        if (result) {
+          const signUpData = {
+            fullName: this.fullName,
+            email: this.email,
+            password: this.password
+          }
+          this.$store.dispatch('signUpUser', signUpData)
         }
-      }
-    },
-    methods: {
-      onSignUp() {
-        this.$validator.validateAll()
-          .then(result => {
-            if (result) {
-              const signUpData = {
-                fullName: this.fullName,
-                email: this.email,
-                password: this.password
-              }
-              this.$store.dispatch('signUpUser', signUpData)
-            }
-          })
-      },
-      jobsDone() {
-        this.$nextTick(() => {
-          this.removeErrors()
-          this.$router.replace('/')
-        })
-      },
-      removeErrors() {
-        this.$validator.reset()
-        this.$store.commit('clearError')
-      }
+      })
     }
   }
+}
 </script>

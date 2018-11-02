@@ -22,6 +22,12 @@ export default {
     removeErrors() {
       this.$validator.reset()
       this.$store.commit('clearError')
+    },
+    jobsDone() {
+      this.$nextTick(() => {
+        this.removeErrors()
+        this.$router.replace('/')
+      })
     }
   }
 }
